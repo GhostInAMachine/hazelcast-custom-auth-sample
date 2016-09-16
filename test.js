@@ -1,43 +1,45 @@
-var HazelcastClient = require("./HazelcastClient").default;
-var ClientConfig = require("./Config").ClientConfig;
-var Address = require("./Address");
+'use strict';
+
+const HazelcastClient = require("hazelcast-client").Client;
+const Config = require("hazelcast-client").Config;
 
 
-var clientConfig = new ClientConfig();
+let clientConfig = new Config.ClientConfig();
 
-function CustomCredentials(principal, factor, divisor) {
+class CustomCredentials {
+  constructor(principal, factor, divisor) {
     this.principal = principal;
     this.factor = factor;
     this.divisor = divisor;
-}
+  }
 
-CustomCredentials.prototype.writeData = function (output) {
+  writeData(output) {
     output.writeUTF(this.principal);
     output.writeInt(this.factor);
     output.writeInt(this.divisor);
-};
+  }
 
-CustomCredentials.prototype.readData = function (input) {
+  readData(input) {
     this.principal = input.readUTF();
     this.factor = input.readInt();
     this.divisor = input.readInt();
-};
+  }
 
-CustomCredentials.prototype.getFactoryId = function () {
+  getFactoryId() {
     return 125;
-};
+  }
 
-CustomCredentials.prototype.getClassId = function () {
+  getClassId() {
     return 1;
-};
+  }
+}
 
 clientConfig.customCredentials = new CustomCredentials("me", 10, 5);
 
 
-HazelcastClient.newHazelcastClient(clientConfig).then(function (client) {
-    console.log("Login successful!")
-}).catch(function (e) {
-    console.log(e.stack);
-});
+HazelcastClient
+  .newHazelcastClient(clientConfig)
+  .then(client => console.log("Login successful!"))
+  .catch(e => console.log(e.stack));
 
 
