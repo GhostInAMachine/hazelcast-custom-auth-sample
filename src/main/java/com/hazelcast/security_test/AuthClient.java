@@ -8,16 +8,12 @@ public class AuthClient {
     public static void main(String[] args) {
         final ClientConfig config = new ClientConfig();
         config.setLicenseKey(System.getProperty("license.key"));
+        final MyUserCredentials userCredentials = new MyUserCredentials("viktor", "pa$$", "hazelcast");
         config.getSerializationConfig()
-                .addDataSerializableFactory(EvenCredentials.CREDENTIAL_FACTORY_ID, new AuthFactory());
+                .addDataSerializableFactory(userCredentials.getFactoryId(), new UserCredentialsIDSFactory());
 
-        final EvenCredentials credentials = new EvenCredentials();
 
-        credentials.setPrincipal("me");
-        credentials.setFactor(10);
-        credentials.setDivisor(2);
-
-        config.setCredentials(credentials);
+        config.setCredentials(userCredentials);
 
 
         final HazelcastInstance client = HazelcastClient.newHazelcastClient(config);

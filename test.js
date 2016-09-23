@@ -1,40 +1,40 @@
 'use strict';
 
-const HazelcastClient = require("hazelcast-client").Client;
-const Config = require("hazelcast-client").Config;
+const HazelcastClient = require('hazelcast-client').Client;
+const Config = require('hazelcast-client').Config;
 
 
 let clientConfig = new Config.ClientConfig();
 
-class CustomCredentials {
-  constructor(principal, factor, divisor) {
-    this.principal = principal;
-    this.factor = factor;
-    this.divisor = divisor;
+class UserCredentials {
+  constructor(user, password, applicationId) {
+    this.user = user;
+    this.password = password;
+    this.applicationId = applicationId;
   }
 
   writeData(output) {
-    output.writeUTF(this.principal);
-    output.writeInt(this.factor);
-    output.writeInt(this.divisor);
+    output.writeUTF(this.user);
+    output.writeUTF(this.password);
+    output.writeUTF(this.applicationId);
   }
 
   readData(input) {
-    this.principal = input.readUTF();
-    this.factor = input.readInt();
-    this.divisor = input.readInt();
+    this.user = input.readUTF();
+    this.password = input.readUTF();
+    this.applicationId = input.readUTF();
   }
 
   getFactoryId() {
-    return 125;
+    return 33;
   }
 
   getClassId() {
-    return 1;
+    return 3301;
   }
 }
 
-clientConfig.customCredentials = new CustomCredentials("me", 10, 5);
+clientConfig.customCredentials = new UserCredentials("viktor", "pa$$", "hazelcast");
 
 
 HazelcastClient
