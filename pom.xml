@@ -8,5 +8,20 @@
     <artifactId>hazelcast-security-test</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast-enterprise-all</artifactId>
+            <version>3.7.1</version>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>enterprise</id>
+            <url>https://repository-hazelcast-l337.forge.cloudbees.com/release/</url>
+        </repository>
+    </repositories>
+
 
 </project>

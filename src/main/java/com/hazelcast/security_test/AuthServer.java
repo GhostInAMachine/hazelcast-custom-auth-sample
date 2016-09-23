@@ -8,12 +8,12 @@ import com.hazelcast.core.HazelcastInstance;
 public class AuthServer {
     public static void main(String[] args) {
         final LoginModuleConfig loginModuleConfig = new LoginModuleConfig();
-        loginModuleConfig.setClassName(CustomLoginModule.class.getName());
+        loginModuleConfig.setClassName(UserCredentialsLoginModule.class.getName());
         loginModuleConfig.setUsage(LoginModuleConfig.LoginModuleUsage.REQUIRED);
 
         final Config config = new Config();
         config.getSerializationConfig()
-                .addDataSerializableFactory(EvenCredentials.CREDENTIAL_FACTORY_ID, new AuthFactory());
+                .addDataSerializableFactory(new MyUserCredentials().getFactoryId(), new UserCredentialsIDSFactory());
 
         config.setLicenseKey(System.getProperty("license.key"));
 

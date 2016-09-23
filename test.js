@@ -1,43 +1,45 @@
-var HazelcastClient = require("./HazelcastClient").default;
-var ClientConfig = require("./Config").ClientConfig;
-var Address = require("./Address");
+'use strict';
+
+const HazelcastClient = require('hazelcast-client').Client;
+const Config = require('hazelcast-client').Config;
 
 
-var clientConfig = new ClientConfig();
+let clientConfig = new Config.ClientConfig();
 
-function CustomCredentials(principal, factor, divisor) {
-    this.principal = principal;
-    this.factor = factor;
-    this.divisor = divisor;
+class UserCredentials {
+  constructor(user, password, applicationId) {
+    this.user = user;
+    this.password = password;
+    this.applicationId = applicationId;
+  }
+
+  writeData(output) {
+    output.writeUTF(this.user);
+    output.writeUTF(this.password);
+    output.writeUTF(this.applicationId);
+  }
+
+  readData(input) {
+    this.user = input.readUTF();
+    this.password = input.readUTF();
+    this.applicationId = input.readUTF();
+  }
+
+  getFactoryId() {
+    return 33;
+  }
+
+  getClassId() {
+    return 3301;
+  }
 }
 
-CustomCredentials.prototype.writeData = function (output) {
-    output.writeUTF(this.principal);
-    output.writeInt(this.factor);
-    output.writeInt(this.divisor);
-};
-
-CustomCredentials.prototype.readData = function (input) {
-    this.principal = input.readUTF();
-    this.factor = input.readInt();
-    this.divisor = input.readInt();
-};
-
-CustomCredentials.prototype.getFactoryId = function () {
-    return 125;
-};
-
-CustomCredentials.prototype.getClassId = function () {
-    return 1;
-};
-
-clientConfig.customCredentials = new CustomCredentials("me", 10, 5);
+clientConfig.customCredentials = new UserCredentials("viktor", "pa$$", "hazelcast");
 
 
-HazelcastClient.newHazelcastClient(clientConfig).then(function (client) {
-    console.log("Login successful!")
-}).catch(function (e) {
-    console.log(e.stack);
-});
+HazelcastClient
+  .newHazelcastClient(clientConfig)
+  .then(client => console.log("Login successful!"))
+  .catch(e => console.log(e.stack));
 
 
